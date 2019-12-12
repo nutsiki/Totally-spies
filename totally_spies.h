@@ -4,7 +4,8 @@
 
 #ifndef DOCUMENTS_TOTALLY_SPIES_H
 # define DOCUMENTS_TOTALLY_SPIES_H
-# define BUFFER_SIZE 5
+# define SIZE_TETRI 20
+
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -21,26 +21,86 @@ char	*ft_strdup(const char *s)
 	return (ps);
 }
 
+
+
+int ft_check_tetri(char *tetri)
+{
+	return (1);
+}
+
+int flood_fill(char *map, t_converge_count *tetri, int i)
+{
+	if (tetri->nb_hash == 4)
+		return (0);
+	map[i] = 'o';
+	tetri->converge->p[tetri->nb_hash++] = (t_coord){i % 5, i / 5};
+	if (i - 1 >= 0 && map[i-1] == '#')
+		flood_fill(map, tetri, i-1);
+	if (i + 1 < 20 && map[i+1] == '#')
+		flood_fill(map, tetri, i+1);
+	if (i - 5 >= 0 && map[i-5] == '#')
+		flood_fill(map, tetri, i-5);
+	if (i + 5 < 20 && map[i+5] == '#')
+		flood_fill(map, tetri, i+5);
+	return (tetri->nb_hash);
+}
+
+int ft_create_tetri(t_mailon *tetri)
+{
+	t_converge *converge;
+	t_converge_count cc;
+	int i;
+	int hashtag;
+
+	i = 0;
+	hashtag = 0;
+	if (!(converge = malloc(sizeof(t_converge))))
+		return (0);
+	while (i < 20)
+	{
+		if (((char *)tetri->content)[i] == '#')
+		{
+			cc = (t_converge_count){converge, 0};
+			if (flood_fill(tetri->content, &cc, i) == 4)
+			{
+				tetri->content = converge;
+				return (1);
+			}
+			return (0);
+		}
+		i++;
+	}
+	return (0);
+}
+
 int		main(void)
 {
 	t_mailon *new;
-	t_mailon *last;
-	char buf[BUFFER_SIZE + 1];
+	t_mailon *lst;
+	char buf[SIZE_TETRI + 1];
 	int size;
 	int fd;
 
-	last = NULL;
+	lst = NULL;
 	if ((fd = open("tetri.txt", O_RDONLY)) == -1)
 		printf("erreur dans le fichier");
-	while ((size = read(fd, buf, BUFFER_SIZE)) > 0) {
-		buf[size] = '\0';
-		new = ft_lstnew(ft_strdup(buf));
-		ft_lstadd_back(&last, new);
-	}
-	while (last)
+	while ((size = read(fd, buf, SIZE_TETRI)) > 0)
 	{
-		printf("%s", last->content);
-		last = last->next;
+		buf[size] = '\0';
+//		printf("buf -> \n%s\n", buf);
+		if (size != SIZE_TETRI || !ft_check_tetri(buf))
+			return (1);
+		new = ft_lstnew(ft_strdup(buf));
+		ft_lstadd_back(&lst, new);
+		ft_create_tetri(new);
+//		for (int i = 0; i < 4; i++)
+//			printf("%d, %d\n", ((t_converge*)new->content)->p[i].x, ((t_converge*)new->content)->p[i].y);
+//		printf("\n");
+		if (!read(fd, buf, 1))
+			break ;
+		if (buf[0] != '\n')
+			return (1);
 	}
+	return (0);
 }
 
