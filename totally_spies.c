@@ -26,15 +26,20 @@ char	*ft_strdup(const char *s)
 int ft_check_tetri(char *tetri)
 {
 	int i;
-	int cpt;
+	int p;
+	int h;
 
 	i = 0;
-	cpt = 16;
+	p = 12;
+	h = 4;
 	while (tetri[i])
 	{
-		if (tetri[i] == '.' || tetri[i] == "#")
-			cpt--;
-		else if ((!(i%5) && tetri[i] != '\n') || cpt < 0 || (i == 20 && cpt))
+		if (tetri[i] == '.')
+			p--;
+		if (tetri[i] == '#')
+			h--;
+		if ((((i % 5)  == 4) && (tetri[i] != '\n'))
+		|| p < 0 || h < 0 || (i == 19 && (h + p)))
 			return (0);
 		i++;
 	}
@@ -86,6 +91,28 @@ int ft_create_tetri(t_mailon *tetri)
 	return (0);
 }
 
+int	put_piece(t_mailon *tetri, t_mailon *map)
+{
+
+}
+
+//int resolv()
+//{
+//	if (piece == nb_piece + 1)
+//		return (1);
+//	while()
+//		while() {
+//			if (placerlapiece()) {
+//
+//				if (resolv(++piece)) {
+//					return (1);
+//				}
+//				retirerpice();
+//			}
+//		}
+//	return (0);
+//}
+
 int		main(void)
 {
 	t_mailon *new;
@@ -100,19 +127,23 @@ int		main(void)
 	while ((size = read(fd, buf, SIZE_TETRI)) > 0)
 	{
 		buf[size] = '\0';
-//		printf("buf -> \n%s\n", buf);
+		printf("buf -> \n%s\n", buf);
 		if (size != SIZE_TETRI || !ft_check_tetri(buf))
 			return (1);
 		new = ft_lstnew(ft_strdup(buf));
 		ft_lstadd_back(&lst, new);
 		ft_create_tetri(new);
-//		for (int i = 0; i < 4; i++)
-//			printf("%d, %d\n", ((t_converge*)new->content)->p[i].x, ((t_converge*)new->content)->p[i].y);
-//		printf("\n");
+		for (int i = 0; i < 4; i++)
+			printf("%d, %d\n", ((t_converge*)new->content)->p[i].x, ((t_converge*)new->content)->p[i].y);
+		printf("\n");
 		if (!read(fd, buf, 1))
 			break ;
 		if (buf[0] != '\n')
 			return (1);
+//		init_map();
+//		while (!resolv()){
+//			returnagrandirlamap();
+//		}
 	}
 	return (0);
 }
