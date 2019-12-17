@@ -25,6 +25,19 @@ char	*ft_strdup(const char *s)
 
 int ft_check_tetri(char *tetri)
 {
+	int i;
+	int cpt;
+
+	i = 0;
+	cpt = 16;
+	while (tetri[i])
+	{
+		if (tetri[i] == '.' || tetri[i] == "#")
+			cpt--;
+		else if ((!(i%5) && tetri[i] != '\n') || cpt < 0 || (i == 20 && cpt))
+			return (0);
+		i++;
+	}
 	return (1);
 }
 
