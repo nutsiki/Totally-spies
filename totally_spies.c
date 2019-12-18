@@ -91,27 +91,135 @@ int ft_create_tetri(t_mailon *tetri)
 	return (0);
 }
 
-int	put_piece(t_mailon *tetri, t_mailon *map)
+char	**init_map(int nb)
 {
+	int x;
+	int y;
+	char **map;
 
+	x = 0;
+	y = 0;
+//	printf("%d\n", nb);
+	map = (char**)malloc(sizeof(char*)*nb);
+	while(x < nb)
+	{
+		map[x] = (char*)malloc(sizeof(char)*nb);
+		x++;
+	}
+	x = 0;
+	while (x < nb)
+	{
+	    y = 0;
+		while (y < nb)
+		{
+			map[x][y] = '.';
+			y++;
+		}
+		map[x][y] = '\n';
+//		printf("la ligne vaut %s\n", map[x]);
+		x++;
+	}
+	return (map);
 }
 
-//int resolv()
+char    **more_space(char **map)
+{
+	char **newmap;
+	int cpt;
+	int x;
+	int y;
+
+	x = 0;
+	y = 0;
+	cpt = ft_strlen(*map)
+	newmap = init_map(newmap);
+	while (x < cpt)
+	{
+		while (y < cpt)
+		{
+			if(map[x][y] != '\n')
+			newmap[x][y] = map[x][y];
+		}
+	}
+
+	newmap
+    return (0);
+
+}
+//int resolv(t_mailon *lst, char **map)
 //{
-//	if (piece == nb_piece + 1)
-//		return (1);
-//	while()
-//		while() {
-//			if (placerlapiece()) {
+//    int piece;
 //
-//				if (resolv(++piece)) {
-//					return (1);
-//				}
-//				retirerpice();
-//			}
-//		}
-//	return (0);
+//    piece = 0;
+//	if (piece == (ft_lstsize(lst) + 1))
+//		return (1);
+//	while(piece < )
+//	{
+//        while ()
+//        {
+//            if (placerlapiece())
+//            {
+//                if (resolv(++piece))
+//                {
+//                    return (1);
+//                }
+//                retirerpice();
+//            }
+//        }
+//    }
+//		return (0);
 //}
+
+int put_piece(char **map, t_converge *tetri)
+{
+    t_coord diff;
+    int i;
+    int x;
+    int y;
+    int cpt;
+
+	cpt = ft_strlen(*map);
+	x = 0;
+	y = 0;
+    diff = (t_coord){0, 0};
+	while (y < cpt)
+    {
+		x = 0;
+		while (x < cpt)
+        {
+			printf("bc\n");
+			if (map[y][x] == '.')
+            {
+				diff.x = x - tetri->p[0].x;
+				diff.y = y - tetri->p[0].y;
+				i = 0;
+				while (i < 4)
+				{
+					printf("diff x : %d | tet px : %d | diff y : %d | tet py : %d\n", diff.x, tetri->p[i].x, diff.y, tetri->p[i].y);
+					printf("map x : %d | map y : %d\n", (diff.x + tetri->p[i].x), (diff.y + tetri->p[i].y));
+					if ((map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x]) == '.')
+					{
+						map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x] = 'A';
+					}
+                	else
+                	{
+                		while (i--)
+						{
+							map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x] = '.';
+						}
+						break;
+					}
+                	i++;
+				}
+                if (i == 4)
+					return (1);
+            }
+            x++;
+        }
+        y++;
+    }
+	return (0);
+}
 
 int		main(void)
 {
@@ -120,6 +228,7 @@ int		main(void)
 	char buf[SIZE_TETRI + 1];
 	int size;
 	int fd;
+	char **map;
 
 	lst = NULL;
 	if ((fd = open("tetri.txt", O_RDONLY)) == -1)
@@ -140,11 +249,31 @@ int		main(void)
 			break ;
 		if (buf[0] != '\n')
 			return (1);
-//		init_map();
-//		while (!resolv()){
-//			returnagrandirlamap();
-//		}
 	}
-	return (0);
+	map = init_map(ft_lstsize(lst));
+	put_piece(map, lst->content);
+	printf("cou\n");
+//	lst = lst->next;
+	printf("cou1\n");
+	put_piece(map, lst->next->content);
+	put_piece(map, lst->next->next->content);
+	map = more_space(map);
+//    while (!resolv(lst,map))
+//    {
+//        return (more_space(map));
+//    }
+	int x = 0;
+	int y = 0;
+	while (x < 4)
+	{
+	    y = 0;
+		while (y <= 4)
+		{
+			printf("%c",map[x][y]);
+			y++;
+		}
+		x++;
+	}
+    return (0);
 }
 
