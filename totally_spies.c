@@ -161,10 +161,10 @@ char    **more_space(char **map)
 		while (y < (cpt -1))
 		{
 			if (map[x][y] != '\n') {
-				printf("map vaut %c et newmap vaut %c  en (%d,%d)\n", map[x][y], newmap[x][y], x, y );
+//				printf("map vaut %c et newmap vaut %c  en (%d,%d)\n", map[x][y], newmap[x][y], x, y );
 				newmap[x][y] = map[x][y];
 			}
-			printf("apres map vaut %c et newmap vaut %c  en (%d,%d)\n", map[x][y], newmap[x][y], x, y );
+//			printf("apres map vaut %c et newmap vaut %c  en (%d,%d)\n", map[x][y], newmap[x][y], x, y );
 			y++;
 		}
 		x++;
