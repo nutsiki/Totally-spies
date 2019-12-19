@@ -131,20 +131,46 @@ char    **more_space(char **map)
 
 	x = 0;
 	y = 0;
-	cpt = ft_strlen(*map)
-	newmap = init_map(newmap);
-	while (x < cpt)
+	cpt = ft_strlen(*map);
+	newmap = init_map(cpt + 1);
+//	while (x < 4)
+//	{
+//		y = 0;
+//		while (y <= 4)
+//		{
+//			printf("%c",map[x][y]);
+//			y++;
+//		}
+//		x++;
+//	}
+//	x = 0;
+//	while (x < 5)
+//	{
+//		y = 0;
+//		while (y <= 5)
+//		{
+//			printf("%c",newmap[x][y]);
+//			y++;
+//		}
+//		x++;
+//	}
+	printf("cpt vaut %d\n", cpt);
+	while (x < (cpt-1))
 	{
-		while (y < cpt)
+		y = 0;
+		while (y < (cpt -1))
 		{
-			if(map[x][y] != '\n')
-			newmap[x][y] = map[x][y];
+			if (map[x][y] != '\n') {
+				printf("map vaut %c et newmap vaut %c  en (%d,%d)\n", map[x][y], newmap[x][y], x, y );
+				newmap[x][y] = map[x][y];
+			}
+			printf("apres map vaut %c et newmap vaut %c  en (%d,%d)\n", map[x][y], newmap[x][y], x, y );
+			y++;
 		}
+		x++;
 	}
-
-	newmap
-    return (0);
-
+	printf("end\n");
+    return (newmap);
 }
 //int resolv(t_mailon *lst, char **map)
 //{
@@ -187,7 +213,6 @@ int put_piece(char **map, t_converge *tetri)
 		x = 0;
 		while (x < cpt)
         {
-			printf("bc\n");
 			if (map[y][x] == '.')
             {
 				diff.x = x - tetri->p[0].x;
@@ -195,8 +220,8 @@ int put_piece(char **map, t_converge *tetri)
 				i = 0;
 				while (i < 4)
 				{
-					printf("diff x : %d | tet px : %d | diff y : %d | tet py : %d\n", diff.x, tetri->p[i].x, diff.y, tetri->p[i].y);
-					printf("map x : %d | map y : %d\n", (diff.x + tetri->p[i].x), (diff.y + tetri->p[i].y));
+//					printf("diff x : %d | tet px : %d | diff y : %d | tet py : %d\n", diff.x, tetri->p[i].x, diff.y, tetri->p[i].y);
+//					printf("map x : %d | map y : %d\n", (diff.x + tetri->p[i].x), (diff.y + tetri->p[i].y));
 					if ((map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x]) == '.')
 					{
 						map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x] = 'A';
@@ -252,9 +277,7 @@ int		main(void)
 	}
 	map = init_map(ft_lstsize(lst));
 	put_piece(map, lst->content);
-	printf("cou\n");
 //	lst = lst->next;
-	printf("cou1\n");
 	put_piece(map, lst->next->content);
 	put_piece(map, lst->next->next->content);
 	map = more_space(map);
@@ -264,10 +287,10 @@ int		main(void)
 //    }
 	int x = 0;
 	int y = 0;
-	while (x < 4)
+	while (x < (ft_strlen(*map)) - 1)
 	{
 	    y = 0;
-		while (y <= 4)
+		while (y <= (ft_strlen(*map)) - 1)
 		{
 			printf("%c",map[x][y]);
 			y++;
