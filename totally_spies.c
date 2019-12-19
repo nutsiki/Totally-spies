@@ -222,7 +222,7 @@ int put_piece(char **map, t_converge *tetri)
 				{
 //					printf("diff x : %d | tet px : %d | diff y : %d | tet py : %d\n", diff.x, tetri->p[i].x, diff.y, tetri->p[i].y);
 //					printf("map x : %d | map y : %d\n", (diff.x + tetri->p[i].x), (diff.y + tetri->p[i].y));
-					if ((map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x]) == '.')
+					if ((tetri->p[i].x + diff.x) >= 0 && (tetri->p[i].y + diff.y) >= 0 && (tetri->p[i].x + diff.x) < cpt && (tetri->p[i].y + diff.y) < cpt && (map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x]) == '.')
 					{
 						map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x] = 'A';
 					}
