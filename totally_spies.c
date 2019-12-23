@@ -21,8 +21,6 @@ char	*ft_strdup(const char *s)
 	return (ps);
 }
 
-
-
 int ft_check_tetri(char *tetri)
 {
 	int i;
@@ -48,10 +46,10 @@ int ft_check_tetri(char *tetri)
 
 int flood_fill(char *map, t_converge_count *tetri, int i)
 {
-	if (tetri->nb_hash == 4)
-		return (0);
-	map[i] = 'o';
-	tetri->converge->p[tetri->nb_hash++] = (t_coord){i % 5, i / 5};
+    if (tetri->nb_hash == 4)
+        return (0);
+    map[i] = 'o';
+    tetri->converge->p[tetri->nb_hash++] = (t_coord){i % 5, i / 5};
 	if (i - 1 >= 0 && map[i-1] == '#')
 		flood_fill(map, tetri, i-1);
 	if (i + 1 < 20 && map[i+1] == '#')
@@ -68,29 +66,41 @@ int ft_create_tetri(t_mailon *tetri)
 	t_converge *converge;
 	t_converge_count cc;
 	int i;
-	int hashtag;
+    static int j;
 
-	i = 0;
-	hashtag = 0;
+    i = -1;
 	if (!(converge = malloc(sizeof(t_converge))))
 		return (0);
-	while (i < 20)
+	while (i++ < 20)
 	{
 		if (((char *)tetri->content)[i] == '#')
 		{
 			cc = (t_converge_count){converge, 0};
 			if (flood_fill(tetri->content, &cc, i) == 4)
 			{
+			    converge->index = j++;
 				tetri->content = converge;
 				return (1);
 			}
 			return (0);
 		}
-		i++;
 	}
 	return (0);
 }
+int ft_sqrt(int nb)
+{
+    int i;
+    int j;
 
+    i = 0;
+    j = 0;
+    while(j < nb)
+    {
+        j = i * i;
+        i++;
+    }
+    return (i - 1);
+}
 char	**init_map(int nb)
 {
 	int x;
@@ -99,7 +109,6 @@ char	**init_map(int nb)
 
 	x = 0;
 	y = 0;
-//	printf("%d\n", nb);
 	map = (char**)malloc(sizeof(char*)*nb);
 	while(x < nb)
 	{
@@ -116,10 +125,9 @@ char	**init_map(int nb)
 			y++;
 		}
 		map[x][y] = '\n';
-//		printf("la ligne vaut %s\n", map[x]);
 		x++;
 	}
-	return (map);
+    return (map);
 }
 
 char    **more_space(char **map)
@@ -132,33 +140,11 @@ char    **more_space(char **map)
 	x = 0;
 	y = 0;
 	cpt = ft_strlen(*map);
-	newmap = init_map(cpt + 1);
-//	while (x < 4)
-//	{
-//		y = 0;
-//		while (y <= 4)
-//		{
-//			printf("%c",map[x][y]);
-//			y++;
-//		}
-//		x++;
-//	}
-//	x = 0;
-//	while (x < 5)
-//	{
-//		y = 0;
-//		while (y <= 5)
-//		{
-//			printf("%c",newmap[x][y]);
-//			y++;
-//		}
-//		x++;
-//	}
-	printf("cpt vaut %d\n", cpt);
-	while (x < (cpt-1))
+    newmap = init_map(cpt);
+	while (x < (cpt) - 1)
 	{
 		y = 0;
-		while (y < (cpt -1))
+		while (y <= cpt - 1)
 		{
 			if (map[x][y] != '\n') {
 //				printf("map vaut %c et newmap vaut %c  en (%d,%d)\n", map[x][y], newmap[x][y], x, y );
@@ -169,81 +155,100 @@ char    **more_space(char **map)
 		}
 		x++;
 	}
-	printf("end\n");
     return (newmap);
 }
-//int resolv(t_mailon *lst, char **map)
-//{
-//    int piece;
-//
-//    piece = 0;
-//	if (piece == (ft_lstsize(lst) + 1))
-//		return (1);
-//	while(piece < )
-//	{
-//        while ()
-//        {
-//            if (placerlapiece())
-//            {
-//                if (resolv(++piece))
-//                {
-//                    return (1);
-//                }
-//                retirerpice();
-//            }
-//        }
-//    }
-//		return (0);
-//}
-
-int put_piece(char **map, t_converge *tetri)
+int put_piece(char **map, t_converge *tetri, int x, int y)
 {
     t_coord diff;
     int i;
+    int cpt;
+
+	cpt = ft_strlen(*map);
+    diff = (t_coord){0, 0};
+    if (map[y][x] == '.')
+    {
+        diff.x = x - tetri->p[0].x;
+        diff.y = y - tetri->p[0].y;
+        i = 0;
+        while (i < 4)
+        {
+//            printf("diff x : %d | tet px : %d | diff y : %d | tet py : %d\n", diff.x, tetri->p[i].x, diff.y, tetri->p[i].y);
+//            printf("map x : %d | map y : %d\n", (diff.x + tetri->p[i].x), (diff.y + tetri->p[i].y));
+            if ((tetri->p[i].x + diff.x) >= 0 && (tetri->p[i].y + diff.y) >= 0 && (tetri->p[i].x + diff.x) < (cpt - 1) && (tetri->p[i].y + diff.y) < (cpt - 1) && (map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x]) == '.')
+            {
+//                printf("je met un A %d\n", cpt);
+                map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x] = 'A' + tetri->index;
+            }
+            else
+            {
+                while (i--)
+                {
+//                    printf("je retire un A %d\n", cpt);
+                    map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x] = '.';
+                }
+                break;
+            }
+            i++;
+        }
+        if (i == 4)
+            return (1);
+    }
+	return (0);
+}
+
+int remove_piece(t_converge *tetri, char **map)
+{
     int x;
     int y;
     int cpt;
 
-	cpt = ft_strlen(*map);
-	x = 0;
-	y = 0;
-    diff = (t_coord){0, 0};
-	while (y < cpt)
+    cpt = ft_strlen(*map);
+    y = 0;
+    while(y < cpt - 1)
     {
-		x = 0;
-		while (x < cpt)
+        x = 0;
+        while (x < cpt)
         {
-			if (map[y][x] == '.')
+            if(map[y][x] == 'A' + tetri->index)
+                map[y][x] = '.';
+            x++;
+        }
+        y++;
+    }
+}
+
+int resolv(t_mailon *lst, char **map)
+{
+    static int piece;
+    int x;
+    int y;
+    int cpt;
+
+    cpt = ft_strlen(*map);
+    y = 0;
+    if (lst == NULL)
+        return (1);
+    while(y < cpt - 1)
+    {
+        x = 0;
+        while (x < cpt)
+        {
+            if (put_piece(map, lst->content, x, y))
             {
-				diff.x = x - tetri->p[0].x;
-				diff.y = y - tetri->p[0].y;
-				i = 0;
-				while (i < 4)
-				{
-//					printf("diff x : %d | tet px : %d | diff y : %d | tet py : %d\n", diff.x, tetri->p[i].x, diff.y, tetri->p[i].y);
-//					printf("map x : %d | map y : %d\n", (diff.x + tetri->p[i].x), (diff.y + tetri->p[i].y));
-					if ((tetri->p[i].x + diff.x) >= 0 && (tetri->p[i].y + diff.y) >= 0 && (tetri->p[i].x + diff.x) < cpt && (tetri->p[i].y + diff.y) < cpt && (map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x]) == '.')
-					{
-						map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x] = 'A';
-					}
-                	else
-                	{
-                		while (i--)
-						{
-							map[tetri->p[i].y + diff.y][tetri->p[i].x + diff.x] = '.';
-						}
-						break;
-					}
-                	i++;
-				}
-                if (i == 4)
-					return (1);
+                piece++;
+//                printf("j ai mit la piece %d en %d / %d \n", piece, x, y);
+                if (resolv(lst->next, map))
+                {
+                    return (1);
+                }
+                piece--;
+                remove_piece(lst->content, map);
             }
             x++;
         }
         y++;
     }
-	return (0);
+    return (0);
 }
 
 int		main(void)
@@ -275,28 +280,63 @@ int		main(void)
 		if (buf[0] != '\n')
 			return (1);
 	}
-	map = init_map(ft_lstsize(lst));
-	put_piece(map, lst->content);
+	map = init_map(ft_sqrt(ft_lstsize(lst) * 4));
+    int l = 0;
+    int m = 0;
+    while (l < (ft_strlen(*map)) - 1)
+    {
+        m = 0;
+        while (m <= (ft_strlen(*map)) - 1)
+        {
+            printf("%c",map[l][m]);
+            m++;
+        }
+        l++;
+    }
+//	resolv(lst, map);
+//	put_piece(map, lst->content, 0, 0);
 //	lst = lst->next;
-	put_piece(map, lst->next->content);
-	put_piece(map, lst->next->next->content);
-	map = more_space(map);
-//    while (!resolv(lst,map))
+//	put_piece(map, lst->next->content, 1, 0);
+//	put_piece(map, lst->next->next->content);
+//    l = 0;
+//    while (l < (ft_strlen(*map)) - 1)
 //    {
-//        return (more_space(map));
+//        m = 0;
+//        while (m <= (ft_strlen(*map)) - 1)
+//        {
+//            printf("%c",map[l][m]);
+//            m++;
+//        }
+//        l++;
 //    }
-	int x = 0;
-	int y = 0;
-	while (x < (ft_strlen(*map)) - 1)
-	{
-	    y = 0;
-		while (y <= (ft_strlen(*map)) - 1)
-		{
-			printf("%c",map[x][y]);
-			y++;
-		}
-		x++;
-	}
+    while (!resolv(lst,map))
+    {
+//        l = 0;
+//        while (l < (ft_strlen(*map)) - 1)
+//        {
+//            m = 0;
+//            while (m <= (ft_strlen(*map)) - 1)
+//            {
+//                printf("%c",map[l][m]);
+//                m++;
+//            }
+//            l++;
+//        }
+//        printf("not resolv\n");
+        map = more_space(map);
+    }
+    l = 0;
+    while (l < (ft_strlen(*map)) - 1)
+    {
+        m = 0;
+        while (m <= (ft_strlen(*map)) - 1)
+        {
+            printf("%c",map[l][m]);
+            m++;
+        }
+        l++;
+    }
+    printf("yo\n");
     return (0);
 }
 
